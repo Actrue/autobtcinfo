@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-
+import { generateMessage } from "./ntfy";
 import { okx } from "./okx";
 import { scheduled } from "./scheduled";
 // 定义每一行数据的 schema
@@ -9,11 +9,17 @@ const app = new Hono<{ Bindings: Env }>()
 
 app.get('/coin/:name', async (c) => {
     const name = c.req.param('name')
-    console.log(name)
-    let info = await okx.getCryptoInfo(name)
+    const key=c.req.param('key')
+    if(key!==c.env.test_api_key){
+        return c.json({
+            code:401,
+            msg:'Unauthorized'
+        })
+    }
+    
+    let info = await generateMessage(name,c.env)
 
-
-    return c.json(info)
+    return c.text(info)
 
 })
 

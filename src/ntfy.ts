@@ -1,8 +1,6 @@
 import { ai } from "./ai";
 import { okx } from "./okx";
-export const ntfy={
-    
-}
+
 
 function getEmoji(percentChange: number): string {
     if (percentChange > 10) return '🚀'; // 飙升
