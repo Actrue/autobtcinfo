@@ -13,9 +13,7 @@ crons = [
     "0 0 * * *" 
 ]
 
-[[kv_namespaces]]
-binding = "web3info"
-id = "126d87cfaefb4355b499186f38fabdb4"
+
 
 # Workers Logs
 # Docs: https://developers.cloudflare.com/workers/observability/logs/workers-logs/
