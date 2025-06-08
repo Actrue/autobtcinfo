@@ -1,0 +1,42 @@
+import OpenAI from "openai";
+import { okx } from "./okx";
+
+const systemPromp=`
+你是一个市场情绪分析师，你将获得以下市场数据
+            coinType:instId,             // 币种类型
+            timestamp: latestTimestamp,  // 最新数据的时间戳(毫秒)
+            utc8Time,                   // UTC+8时间格式(YYYY-MM-DD HH:MM:SS)
+            currentPrice,               // 当前价格(最新收盘价)
+            maxPrice,                   // 6期数据中的最高价
+            minPrice,                   // 6期数据中的最低价
+            ma5,                        // 5期移动平均(旧数据)
+            deviationPercent,           // 当前价格相对于MA5的偏移百分比
+            volumeRangeChange           // 交易量/振动幅度变化量（前一天的交易量/振动幅度对比前五天的交易量/振动幅度平均值百分比变化）
+            你需要根据以上数据判断市场的情绪。
+            你的回复格式是
+            ## 市场情绪分析
+            ## 根据市场情绪预计市场走向
+`
+
+export async function ai(coinType: string, env: Env) {
+    const openai = new OpenAI({
+        baseURL: 'https://api.deepseek.com',
+        apiKey: env.deepseek_api_key,
+    });
+    const cryptoDataInfo = await okx.getCryptoInfo(coinType)
+    if (!cryptoDataInfo.states) {
+        console.log(cryptoDataInfo)
+        throw new Error('获取数据失败')
+
+    }
+    const cryptoData = cryptoDataInfo.data!
+    const completion = await openai.chat.completions.create({
+        messages: [{ role: "system", content: systemPromp }, { role: "user", content: JSON.stringify(cryptoData) }],
+        model: "deepseek-chat",
+        stream: false,
+    });
+
+    console.log(completion.choices[0].message.content);
+    return completion.choices[0].message.content;
+}
+
