@@ -9,7 +9,7 @@ const app = new Hono<{ Bindings: Env }>()
 
 app.get('/coin/:name', async (c) => {
     const name = c.req.param('name')
-    const key=c.req.param('key')
+    const key=c.req.query('key')
     if(key!==c.env.test_api_key){
         return c.json({
             code:401,
