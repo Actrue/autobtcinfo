@@ -36,7 +36,11 @@ export async function ai(coinType: string, env: Env) {
         stream: false,
     });
 
-    console.log(completion.choices[0].message.content);
+   
+    if(!completion.choices[0].message.content){
+        console.log('获取ai数据失败')
+        throw new Error('获取ai数据失败')
+    }
     return completion.choices[0].message.content;
 }
 

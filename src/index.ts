@@ -19,10 +19,6 @@ app.get('/coin/:name', async (c) => {
 
 
 
-export interface Env {
-    web3info: KVNamespace;
-}
-
 export default {
 
     scheduled: scheduled,

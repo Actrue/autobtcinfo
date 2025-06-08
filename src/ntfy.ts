@@ -1,4 +1,4 @@
-import { CoinData } from "./types";
+import { ai } from "./ai";
 import { okx } from "./okx";
 export const ntfy={
     
@@ -20,7 +20,7 @@ function getEmoji(percentChange: number): string {
 
 
 
-export async function generateMessage(coinType:string) {
+export async function generateMessage(coinType:string, env: Env) {
     const cryptoDataInfo=await okx.getCryptoInfo(coinType)
     if(!cryptoDataInfo.states){
         console.log(cryptoDataInfo)
@@ -30,13 +30,15 @@ export async function generateMessage(coinType:string) {
     const cryptoData=cryptoDataInfo.data!
 
     const emoji = getEmoji(cryptoData.deviationPercent);
+    const aiAnalysis = await ai(coinType, env);
     
     return `${emoji} ${coinType}行情更新 ${cryptoData.utc8Time}\n\n` +
            `当前价格: ${cryptoData.currentPrice.toFixed(2)}\n` +
            `5日均价: ${cryptoData.ma5.toFixed(2)} (偏离: ${cryptoData.deviationPercent.toFixed(2)}%)\n` +
            `100日最高价: ${cryptoData.maxPrice.toFixed(2)}\n` +
            `100日最低价: ${cryptoData.minPrice.toFixed(2)}\n` +
-           `交易量/振幅变化: ${cryptoData.volumeRangeChange.toFixed(2)}%`;
+           `交易量/振幅变化: ${cryptoData.volumeRangeChange.toFixed(2)}%\n\n` +
+           `${aiAnalysis}`;
 }
 
 export async function sendNtfyMessage(message: string): Promise<void> {
