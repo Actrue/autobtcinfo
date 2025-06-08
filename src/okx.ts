@@ -1,14 +1,17 @@
 import { schema } from "./types";
-import axios from "axios";
+
 
 export const okx={
     getCryptoInfo
 }
 async function getCryptoInfo(instId: string) {
-    const okxResponse = await axios.get(`https://okx.worker.sereniblue.com/api/v5/market/candles?instId=${instId}&&limit=100&&bar=1Dutc`);
+    const okxResponse = await fetch(`https://www.okx.com/api/v5/market/candles?instId=${instId}&&limit=100&&bar=1Dutc`,{
+        method: 'GET',
+    });
+    
     
   
-    const okxData = schema.OkxInfoResponseSchema.safeParse(okxResponse.data);
+    const okxData = schema.OkxInfoResponseSchema.safeParse(await okxResponse.json());
     if (!okxData.success) {
         return {
             states: false,
