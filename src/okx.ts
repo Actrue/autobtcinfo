@@ -61,20 +61,29 @@ async function getCryptoInfo(instId: string) {
     const utc8Time = convertUnixToUTC8(parseInt(latestTimestamp));
     
     return {
-        states: true,
-        msg: "成功获取信息",
-        data: {
-            coinType:instId,             // 币种类型
-            timestamp: latestTimestamp,  // 最新数据的时间戳(毫秒)
-            utc8Time,                   // UTC+8时间格式(YYYY-MM-DD HH:MM:SS)
-            currentPrice,               // 当前价格(最新收盘价)
-            maxPrice,                   // 6期数据中的最高价
-            minPrice,                   // 6期数据中的最低价
-            ma5,                        // 5期移动平均(旧数据)
-            deviationPercent,           // 当前价格相对于MA5的偏移百分比
-            volumeDeviationPercent       // 前一日交易量相对于5日平均的偏移百分比
-        }
-    };
+            states: true,
+            msg: "成功获取信息",
+            data: {
+                coinType:instId,             // 币种类型
+                timestamp: latestTimestamp,  // 最新数据的时间戳(毫秒)
+                utc8Time,                   // UTC+8时间格式(YYYY-MM-DD HH:MM:SS)
+                currentPrice,               // 当前价格(最新收盘价)
+                maxPrice,                   // 6期数据中的最高价
+                minPrice,                   // 6期数据中的最低价
+                ma5,                        // 5期移动平均(旧数据)
+                deviationPercent,           // 当前价格相对于MA5的偏移百分比
+                volumeDeviationPercent,      // 前一日交易量相对于5日平均的偏移百分比
+                last5DaysCandles: candles.slice(0, 5).map(candle => ({
+                    timestamp: candle[0],
+                    utc8Time: convertUnixToUTC8(parseInt(candle[0])),
+                    open: parseFloat(candle[1]),
+                    high: parseFloat(candle[2]),
+                    low: parseFloat(candle[3]),
+                    close: parseFloat(candle[4]),
+                    volume: parseFloat(candle[5])
+                }))
+            }
+        };
 }
 
 function convertUnixToUTC8(unixTimestamp: number): string {

@@ -3,15 +3,16 @@ import { okx } from "./okx";
 import { env } from "cloudflare:workers";
 const systemPromp=`
 你是一个市场情绪分析师，你将获得以下市场数据
-            coinType:instId,             // 币种类型
-            timestamp: latestTimestamp,  // 最新数据的时间戳(毫秒)
-            utc8Time,                   // UTC+8时间格式(YYYY-MM-DD HH:MM:SS)
-            currentPrice,               // 当前价格(最新收盘价)
-            maxPrice,                   // 6期数据中的最高价
-            minPrice,                   // 6期数据中的最低价
-            ma5,                        // 5期移动平均(旧数据)
-            deviationPercent,           // 当前价格相对于MA5的偏移百分比
-            volumeRangeChange           // 交易量/振动幅度变化量（前一天的交易量/振动幅度对比前五天的交易量/振动幅度平均值百分比变化）
+                coinType:instId,             // 币种类型
+                timestamp: latestTimestamp,  // 最新数据的时间戳(毫秒)
+                utc8Time,                   // UTC+8时间格式(YYYY-MM-DD HH:MM:SS)
+                currentPrice,               // 当前价格(最新收盘价)
+                maxPrice,                   // 6期数据中的最高价
+                minPrice,                   // 6期数据中的最低价
+                ma5,                        // 5期移动平均(旧数据)
+                deviationPercent,           // 当前价格相对于MA5的偏移百分比
+                volumeDeviationPercent,      // 前一日交易量相对于5日平均的偏移百分比
+                以及仅五日的日k线数据
             你需要根据以上数据判断市场的情绪。
             你的回复格式是
             ## 市场情绪分析
@@ -41,7 +42,7 @@ export async function ai(coinType: string) {
         console.log('获取ai数据失败')
         throw new Error('获取ai数据失败')
     }
-    await env.KV.put(`加密货币${coinType}- ai信息日报`, completion.choices[0].message.content)
+   
     return completion.choices[0].message.content;
 }
 
