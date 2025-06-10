@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 import { okx } from "./okx";
-
+import { env } from "cloudflare:workers";
 const systemPromp=`
 你是一个市场情绪分析师，你将获得以下市场数据
             coinType:instId,             // 币种类型
@@ -18,7 +18,7 @@ const systemPromp=`
             ## 根据市场情绪预计市场走向
 `
 
-export async function ai(coinType: string, env: Env) {
+export async function ai(coinType: string) {
     const openai = new OpenAI({
         baseURL: 'https://api.deepseek.com',
         apiKey: env.deepseek_api_key,

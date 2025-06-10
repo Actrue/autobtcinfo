@@ -50,14 +50,11 @@ async function getCryptoInfo(instId: string) {
     // 计算振动幅度（最高-最低）
     const ranges = highs.map((high, i) => high - lows[i]);
     
-    // 当前交易量/振动幅度
-    const currentVolumeRangeRatio = volumes[1] / ranges[1];
+    // 计算5日平均交易量
+    const avgVolume5Days = volumes.slice(1).reduce((sum, vol) => sum + vol, 0) / 5;
     
-    // 5期平均交易量/振动幅度
-    const avgVolumeRangeRatio = volumes.slice(1).reduce((sum, vol, i) => sum + (vol / ranges[i+1]), 0) / 5;
-    
-    // 交易量/振动幅度变化量
-    const volumeRangeChange = currentVolumeRangeRatio - avgVolumeRangeRatio;
+    // 前一日交易量相对于5日平均的偏移百分比
+    const volumeDeviationPercent = ((volumes[1] - avgVolume5Days) / avgVolume5Days) * 100;
 
     // 获取最新数据的时间戳并转换为UTC8时间
     const latestTimestamp = candles[0][0];
@@ -75,7 +72,7 @@ async function getCryptoInfo(instId: string) {
             minPrice,                   // 6期数据中的最低价
             ma5,                        // 5期移动平均(旧数据)
             deviationPercent,           // 当前价格相对于MA5的偏移百分比
-            volumeRangeChange           // 交易量/振动幅度变化量（前一天的交易量/振动幅度对比前五天的交易量/振动幅度平均值百分比变化）
+            volumeDeviationPercent       // 前一日交易量相对于5日平均的偏移百分比
         }
     };
 }

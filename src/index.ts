@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { generateMessage } from "./ntfy";
-import { okx } from "./okx";
+
 import { scheduled } from "./scheduled";
 // 定义每一行数据的 schema
 
@@ -17,7 +17,7 @@ app.get('/coin/:name', async (c) => {
         })
     }
     
-    let info = await generateMessage(name,c.env)
+    let info = await generateMessage(name)
 
     return c.text(info)
 

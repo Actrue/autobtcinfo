@@ -13,6 +13,10 @@ crons = [
     "10 0 * * *" 
 ]
 
+[[kv_namespaces]]
+binding = "KV"
+id = "126d87cfaefb4355b499186f38fabdb4"
+
 
 
 # Workers Logs
