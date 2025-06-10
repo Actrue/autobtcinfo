@@ -41,6 +41,7 @@ export async function ai(coinType: string) {
         console.log('获取ai数据失败')
         throw new Error('获取ai数据失败')
     }
+    await env.KV.put(`加密货币${coinType}- ai信息日报`, completion.choices[0].message.content)
     return completion.choices[0].message.content;
 }
 
