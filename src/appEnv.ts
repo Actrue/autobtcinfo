@@ -1,3 +1,3 @@
 export const appEnv={
-    coreCoin:['BTC-USDT','ETH-USDT','SQL-USDT'],
+    coreCoin:['BTC-USDT','ETH-USDT','SQL-USDT','OKb-USDT'],
 }
