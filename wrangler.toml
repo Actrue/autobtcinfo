@@ -16,6 +16,8 @@ crons = [
 [[kv_namespaces]]
 binding = "KV"
 id = "126d87cfaefb4355b499186f38fabdb4"
+[vars]
+coreCoin = ["BTC-USDT", "ETH-USDT", "SQL-USDT", "OKb-USDT"]
 
 
 
