@@ -1,9 +1,6 @@
 import { schema } from "./types";
 
 
-export const okx={
-    getCryptoInfo
-}
 async function getCryptoInfo(instId: string) {
     const okxResponse = await fetch(`https://www.okx.com/api/v5/market/candles?instId=${instId}&&limit=100&&bar=1Dutc`,{
         method: 'GET',
@@ -47,6 +44,24 @@ async function getCryptoInfo(instId: string) {
     const maxPrice = Math.max(...allCloses);
     const minPrice = Math.min(...allCloses);
     
+    // 计算RSI14
+    const 最近15天收盘价 = allCloses.slice(0, 15);
+    const 价格变动 = [];
+    for (let i = 0; i < 14; i++) {
+        价格变动.push(最近15天收盘价[i] - 最近15天收盘价[i + 1]);
+    }
+    const 上涨变动总和 = 价格变动.filter(变动 => 变动 > 0).reduce((总和, 变动) => 总和 + 变动, 0);
+    const 下跌变动总和 = 价格变动.filter(变动 => 变动 < 0).reduce((总和, 变动) => 总和 + Math.abs(变动), 0);
+    const 平均上涨 = 上涨变动总和 / 14;
+    const 平均下跌 = 下跌变动总和 / 14;
+    let rsi14;
+    if (平均下跌 === 0) {
+        rsi14 = 100;
+    } else {
+        const rs = 平均上涨 / 平均下跌;
+        rsi14 = 100 - (100 / (1 + rs));
+    }
+    
     // 计算振动幅度（最高-最低）
     const ranges = highs.map((high, i) => high - lows[i]);
     
@@ -73,6 +88,7 @@ async function getCryptoInfo(instId: string) {
                 ma5,                        // 5期移动平均(旧数据)
                 deviationPercent,           // 当前价格相对于MA5的偏移百分比
                 volumeDeviationPercent,      // 前一日交易量相对于5日平均的偏移百分比
+                rsi14,                      // RSI14指标
                 last5DaysCandles: candles.slice(0, 5).map(candle => ({
                     timestamp: candle[0],
                     utc8Time: convertUnixToUTC8(parseInt(candle[0])),
@@ -92,3 +108,21 @@ function convertUnixToUTC8(unixTimestamp: number): string {
 
     return utc8Time.toISOString().replace('T', ' ').slice(0, 19); // 格式化时间为YYYY-MM-DD HH:MM:SS
 }
+
+const CrypotoPrompt = `变量含义解释：
+    - coinType: 币种类型
+    - timestamp: 最新数据的时间戳(毫秒)
+    - utc8Time: UTC+8时间格式(YYYY-MM-DD HH:MM:SS)
+    - currentPrice: 当前价格(最新收盘价)
+    - maxPrice: 6期数据中的最高价
+    - minPrice: 6期数据中的最低价
+    - ma5: 5期移动平均(旧数据)
+    - deviationPercent: 当前价格相对于MA5的偏移百分比
+    - volumeDeviationPercent: 前一日交易量相对于5日平均的偏移百分比
+    - rsi14: RSI14指标
+    - last5DaysCandles: 过去5天的K线数据，包含时间戳、开盘价、最高价、最低价、收盘价和交易量`;
+
+    export const okx={
+        getCryptoInfo,
+        CrypotoPrompt
+    }
