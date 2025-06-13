@@ -10,14 +10,15 @@ routes = [
 
 [triggers]
 crons = [
-    "10 0 * * *" 
+    "10 0 * * *" ,
+    "*/15 * * * *"
 ]
 
 [[kv_namespaces]]
 binding = "KV"
 id = "126d87cfaefb4355b499186f38fabdb4"
 [vars]
-coreCoin = ["BTC-USDT", "ETH-USDT", "SQL-USDT", "OKb-USDT"]
+coreCoin = ["BTC-USDT", "ETH-USDT", "SOL-USDT", "OKB-USDT","DOGE-USDT",""]
 
 
 
