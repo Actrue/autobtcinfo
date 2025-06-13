@@ -1,4 +1,5 @@
 import { generateMessage, sendNtfyMessage } from "./ntfy";
+import { env } from "cloudflare:workers";
 import { okx } from "./okx";
 
 const coreCoin = ["BTC-USDT", 
@@ -30,7 +31,16 @@ export async function scheduled(controller: ScheduledController, env: Env, ctx: 
                         message.push(`偏离幅度: ${Math.abs(deviation).toFixed(2)}% ${direction}5日均值`)
                     }
                 }
-                if(message.length > 0) await sendNtfyMessage(message.toString());
+                if(message.length > 0) {
+                    const cacheKey = `cache_${coin}_price_alert`;
+                    const cachedMessage = await env.KV.get(cacheKey);
+                    const currentMessage = message.join('');
+                    
+                    if(cachedMessage !== currentMessage) {
+                        await env.KV.put(cacheKey, currentMessage);
+                        await sendNtfyMessage(currentMessage);
+                    }
+                }
             }
             
 
