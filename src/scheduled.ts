@@ -25,10 +25,8 @@ export async function scheduled(controller: ScheduledController, env: Env, ctx: 
                     const deviation = cryptoDataInfo.data.deviationPercent
                     if(Math.abs(deviation) > 5){
                         const direction = deviation > 0 ? '高于' : '低于'
-                        message.push(`【${coin}价格预警】\n`)
-                        message.push(`当前价格: ${cryptoDataInfo.data.currentPrice} USDT\n`)
-                        message.push(`5日均价: ${cryptoDataInfo.data.ma5} USDT\n`)
-                        message.push(`偏离幅度: ${Math.abs(deviation).toFixed(2)}% ${direction}5日均值`)
+                        message.push(`【${coin}价格预警,市场超卖超买\n`)
+                       
                     }
                 }
                 if(message.length > 0) {
