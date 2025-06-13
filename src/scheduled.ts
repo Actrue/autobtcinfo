@@ -19,12 +19,18 @@ export async function scheduled(controller: ScheduledController, env: Env, ctx: 
             // 执行15分钟的定时任务
             for (const coin of coreCoin) {
                 const cryptoDataInfo = await okx.getCryptoInfo(coin)
+                let message:string[]=[]
                 if(cryptoDataInfo.data){
-                    if(Math.abs(cryptoDataInfo.data.deviationPercent) > 5){}
-                    const message = `注意${coin},当前价格相比于5日均值偏离${cryptoDataInfo.data?.deviationPercent}%`
-                    
-                    await sendNtfyMessage(message);
+                    const deviation = cryptoDataInfo.data.deviationPercent
+                    if(Math.abs(deviation) > 5){
+                        const direction = deviation > 0 ? '高于' : '低于'
+                        message.push(`【${coin}价格预警】\n`)
+                        message.push(`当前价格: ${cryptoDataInfo.data.currentPrice} USDT\n`)
+                        message.push(`5日均价: ${cryptoDataInfo.data.ma5} USDT\n`)
+                        message.push(`偏离幅度: ${Math.abs(deviation).toFixed(2)}% ${direction}5日均值`)
+                    }
                 }
+                if(message.length > 0) await sendNtfyMessage(message.toString());
             }
             
 
