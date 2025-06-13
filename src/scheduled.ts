@@ -35,7 +35,7 @@ export async function scheduled(controller: ScheduledController, env: Env, ctx: 
                     const currentMessage = message.join('');
                     
                     if(cachedMessage !== currentMessage) {
-                        await env.KV.put(cacheKey, currentMessage);
+                        await env.KV.put(cacheKey, currentMessage,{expirationTtl: 60 * 60 * 24});
                         await sendNtfyMessage(currentMessage);
                     }
                 }
