@@ -2,16 +2,18 @@ import { generateMessage, sendNtfyMessage } from "./ntfy";
 import { env } from "cloudflare:workers";
 import { okx } from "./okx";
 
-const coreCoin = ["BTC-USDT", 
+const coreCoin = [
+    "XRP-USDT",
+    "BTC-USDT", 
     "ETH-USDT", 
     "SOL-USDT", 
     "OKB-USDT",
     "DOGE-USDT",
-    "XRP-USDT",
-    "BNB-USDT",
+    "TRUMP-USDT",
+    "BCH-USDT",
     "TRX-USDT",
-    "ADA-USDT",
-    "STETH-USDT"]
+   
+    ]
 
 export async function scheduled(controller: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {
     switch (controller.cron) {
@@ -55,5 +57,5 @@ export async function scheduled(controller: ScheduledController, env: Env, ctx: 
                 await sendNtfyMessage(message);
             }
     }
-    console.log("cron processed");
+ 
 }
