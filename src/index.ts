@@ -6,7 +6,7 @@ import { scheduled } from "./scheduled";
 
 //接口定义部分
 const app = new Hono<{ Bindings: Env }>()
-
+/*
 app.get('/coin/:name', async (c) => {
     const name = c.req.param('name')
     const key=c.req.query('key')
@@ -94,6 +94,7 @@ app.get('/',async (c)=>{
     
     return c.html(html)
 })
+*/
 
 
 
