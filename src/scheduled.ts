@@ -25,7 +25,7 @@ export async function scheduled(controller: ScheduledController, env: Env, ctx: 
                 let message:string[]=[]
                 if(cryptoDataInfo.data){
                     const deviation = cryptoDataInfo.data.deviationPercent
-                    if(Math.abs(deviation) > 5){
+                    if(Math.abs(deviation) > 2){
                         const direction = deviation > 0 ? '高于' : '低于'
                         message.push(`【${coin}价格预警,市场超卖超买\n`)
                        
@@ -37,7 +37,7 @@ export async function scheduled(controller: ScheduledController, env: Env, ctx: 
                     const currentMessage = message.join('');
                     
                     if(cachedMessage !== currentMessage) {
-                        await env.KV.put(cacheKey, currentMessage,{expirationTtl: 60 * 60 * 24});
+                        await env.KV.put(cacheKey, currentMessage,{expirationTtl: 60 * 60 * 5});
                         await sendNtfyMessage(currentMessage);
                     }
                 }

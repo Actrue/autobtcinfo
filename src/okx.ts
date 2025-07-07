@@ -2,7 +2,7 @@ import { schema } from "./types";
 
 
 async function getCryptoInfo(instId: string) {
-    const okxResponse = await fetch(`https://www.okx.com/api/v5/market/candles?instId=${instId}&&limit=100&&bar=1Dutc`,{
+    const okxResponse = await fetch(`https://www.okx.com/api/v5/market/candles?instId=${instId}&&limit=100&&bar=1H`,{
         method: 'GET',
     });
     
