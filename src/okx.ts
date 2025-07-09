@@ -102,6 +102,41 @@ async function getCryptoInfo(instId: string) {
         };
 }
 
+async function 上班信号() {
+    const okxResponse = await fetch(`https://www.okx.com/api/v5/market/candles?instId=BTC-USDT&limit=100&&bar=1H`,{
+        method: 'GET',
+    });
+    const okxData = schema.OkxInfoResponseSchema.safeParse(await okxResponse.json());
+    if (!okxData.success) {
+        return {
+            states: false,
+            msg: okxData.error.message
+        }
+    }
+    
+    const allCandles = okxData.data.data;
+    const currentCandle = allCandles[0];
+    const currentVolume = parseFloat(currentCandle[5]);
+    const currentMinute = new Date().getMinutes();
+    
+    // 估算当前K线交易量
+    const estimatedVolume = currentVolume / currentMinute * 60;
+    
+    // 计算100期平均交易量
+    const avg100Volume = allCandles
+        .slice(1, 101)
+        .reduce((sum, candle) => sum + parseFloat(candle[5]), 0) / 100;
+    
+    // 比较并返回信号
+    return {
+        states: true,
+        signal: estimatedVolume > avg100Volume,
+        msg: estimatedVolume > avg100Volume ? 
+            '当前K线交易量超过100期平均' : 
+            '当前K线交易量未超过100期平均'
+    };
+}
+
 function convertUnixToUTC8(unixTimestamp: number): string {
     const date = new Date(unixTimestamp);
     const utc8Time = new Date(date.getTime() + 8 * 60 * 60 * 1000); // 直接加上8小时的毫秒数
@@ -124,5 +159,6 @@ const CrypotoPrompt = `变量含义解释：
 
     export const okx={
         getCryptoInfo,
-        CrypotoPrompt
+        CrypotoPrompt,
+        上班信号,
     }

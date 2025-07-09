@@ -2,6 +2,7 @@ import { generateMessage, sendNtfyMessage } from "./ntfy";
 import { env } from "cloudflare:workers";
 import { okx } from "./okx";
 
+
 const coreCoin = [
     "XRP-USDT",
     "BTC-USDT", 
@@ -42,6 +43,16 @@ export async function scheduled(controller: ScheduledController, env: Env, ctx: 
                     }
                 }
             }
+            const 上班信号=await okx.上班信号()
+            if(上班信号.states && 上班信号.signal){
+                const cacheKey = 'cache_work_signal';
+                const cachedSignal = await env.KV.get(cacheKey);
+                if(!cachedSignal){
+                    await env.KV.put(cacheKey, 'sent', {expirationTtl: 60 * 60 * 5});
+                    await sendNtfyMessage(上班信号.msg);
+                }
+            }
+            
             
 
         
