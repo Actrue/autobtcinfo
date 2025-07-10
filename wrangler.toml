@@ -8,10 +8,10 @@ routes = [
   { pattern = "web3.worker.sereniblue.com", custom_domain = true }
 ]
 
-[triggers]
-crons = [
-    "*/15 * * * *"
-]
+# [triggers]
+# crons = [
+#     "*/15 * * * *"
+# ]
 
 [[kv_namespaces]]
 binding = "KV"
